@@ -1,0 +1,6 @@
+@SmartSure.Claims.API_HostAddress = http://localhost:5008
+
+GET {{SmartSure.Claims.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
