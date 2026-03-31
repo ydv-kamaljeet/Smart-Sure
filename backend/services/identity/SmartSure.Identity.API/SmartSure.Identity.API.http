@@ -1,0 +1,6 @@
+@SmartSure.Identity.API_HostAddress = http://localhost:5102
+
+GET {{SmartSure.Identity.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartSure.Identity.Domain\SmartSure.Identity.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\SmartSure.Shared.Contracts\SmartSure.Shared.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\SmartSure.Shared.Common\SmartSure.Shared.Common.csproj" />
+    <ProjectReference Include="..\..\..\shared\SmartSure.Shared.Security\SmartSure.Shared.Security.csproj" />
+    <ProjectReference Include="..\..\..\shared\SmartSure.Shared.Infrastructure\SmartSure.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageReference Include="MailKit" Version="4.15.1" />
+    <PackageReference Include="MassTransit" Version="8.3.6" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.5" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
