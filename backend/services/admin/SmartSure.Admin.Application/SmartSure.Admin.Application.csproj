@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\SmartSure.Admin.Domain\SmartSure.Admin.Domain.csproj" />
+    <ProjectReference Include="..\..\..\shared\SmartSure.Shared.Contracts\SmartSure.Shared.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\shared\SmartSure.Shared.Common\SmartSure.Shared.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.3.6" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+</Project>
