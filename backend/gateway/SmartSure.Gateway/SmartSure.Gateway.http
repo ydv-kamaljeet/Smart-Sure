@@ -1,0 +1,6 @@
+@SmartSure.Gateway_HostAddress = http://localhost:5083
+
+GET {{SmartSure.Gateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
