@@ -1,0 +1,36 @@
+<Solution>
+  <Folder Name="/gateway/">
+    <Project Path="gateway/SmartSure.Gateway/SmartSure.Gateway.csproj" />
+  </Folder>
+  <Folder Name="/services/" />
+  <Folder Name="/services/admin/">
+    <Project Path="services/admin/SmartSure.Admin.API/SmartSure.Admin.API.csproj" />
+    <Project Path="services/admin/SmartSure.Admin.Application/SmartSure.Admin.Application.csproj" />
+    <Project Path="services/admin/SmartSure.Admin.Domain/SmartSure.Admin.Domain.csproj" />
+    <Project Path="services/admin/SmartSure.Admin.Infrastructure/SmartSure.Admin.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/claims/">
+    <Project Path="services/claims/SmartSure.Claims.API/SmartSure.Claims.API.csproj" />
+    <Project Path="services/claims/SmartSure.Claims.Application/SmartSure.Claims.Application.csproj" />
+    <Project Path="services/claims/SmartSure.Claims.Domain/SmartSure.Claims.Domain.csproj" />
+    <Project Path="services/claims/SmartSure.Claims.Infrastructure/SmartSure.Claims.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/identity/">
+    <Project Path="services/identity/SmartSure.Identity.API/SmartSure.Identity.API.csproj" />
+    <Project Path="services/identity/SmartSure.Identity.Application/SmartSure.Identity.Application.csproj" />
+    <Project Path="services/identity/SmartSure.Identity.Domain/SmartSure.Identity.Domain.csproj" />
+    <Project Path="services/identity/SmartSure.Identity.Infrastructure/SmartSure.Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/policy/">
+    <Project Path="services/policy/SmartSure.Policy.API/SmartSure.Policy.API.csproj" />
+    <Project Path="services/policy/SmartSure.Policy.Application/SmartSure.Policy.Application.csproj" />
+    <Project Path="services/policy/SmartSure.Policy.Domain/SmartSure.Policy.Domain.csproj" />
+    <Project Path="services/policy/SmartSure.Policy.Infrastructure/SmartSure.Policy.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/SmartSure.Shared.Common/SmartSure.Shared.Common.csproj" />
+    <Project Path="shared/SmartSure.Shared.Contracts/SmartSure.Shared.Contracts.csproj" />
+    <Project Path="shared/SmartSure.Shared.Infrastructure/SmartSure.Shared.Infrastructure.csproj" />
+    <Project Path="shared/SmartSure.Shared.Security/SmartSure.Shared.Security.csproj" />
+  </Folder>
+</Solution>
