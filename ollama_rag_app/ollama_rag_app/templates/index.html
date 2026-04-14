@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ollama RAG Chatbot</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h1>Ollama RAG</h1>
+      <p class="muted">Model: <strong>{{ model_name }}</strong></p>
+
+      <section class="panel">
+        <h2>Upload text file</h2>
+        <form id="uploadForm">
+          <input type="file" id="fileInput" name="file" accept=".txt,.md" required />
+          <button type="submit">Upload & Index</button>
+        </form>
+        <p id="uploadStatus" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <h2>Indexed documents</h2>
+        <div id="docList" class="doc-list">
+          {% if documents %}
+            {% for doc in documents %}
+              <div class="doc-item">
+                <div>{{ doc.filename }}</div>
+                <small>{{ doc.chunk_count }} chunks</small>
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="muted">No documents uploaded yet.</p>
+          {% endif %}
+        </div>
+      </section>
+    </aside>
+
+    <main class="chat-area">
+      <div class="chat-header">
+        <h2>Ask questions about your files</h2>
+        <p>Upload a <code>.txt</code> or <code>.md</code> file, then ask questions. The app retrieves relevant chunks and sends them to Ollama.</p>
+      </div>
+
+      <div id="chatBox" class="chat-box">
+        <div class="message bot">
+          <div class="bubble">
+            Hello! Upload a text file and ask me something about it.
+          </div>
+        </div>
+      </div>
+
+      <form id="chatForm" class="chat-form">
+        <textarea id="questionInput" placeholder="Ask a question about your uploaded document..." rows="3" required></textarea>
+        <button type="submit">Send</button>
+      </form>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
