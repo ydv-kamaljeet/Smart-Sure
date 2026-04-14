@@ -1,0 +1,139 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-primary text-white py-3 px-4">
+          <h4 class="mb-0 fw-bold"><i class="bi bi-file-earmark-plus me-2"></i>Initiate New Claim</h4>
+          <p class="small mb-0 opacity-75">Submit your claim details and supporting documents for review.</p>
+        </div>
+
+        <div class="card-body p-4">
+          <div *ngIf="loading" class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Loading your policies...</p>
+          </div>
+
+          <div *ngIf="!loading && policies.length === 0" class="text-center py-5">
+            <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+            <h5>No Active Policies Found</h5>
+            <p class="text-muted">You must have an active policy to initiate a claim.</p>
+            <a routerLink="/dashboard" class="btn btn-primary rounded-pill px-4">Return to Dashboard</a>
+          </div>
+
+          <form *ngIf="!loading && policies.length > 0" (ngSubmit)="onSubmit()" #claimForm="ngForm">
+            <div *ngIf="error" class="alert alert-danger mb-4 rounded-3 d-flex align-items-center">
+              <i class="bi bi-x-circle-fill me-2"></i>
+              <div>{{ error }}</div>
+            </div>
+
+            <div class="row g-4">
+              <!-- Policy Selection -->
+              <div class="col-md-12">
+                <label class="form-label fw-semibold">Select Policy</label>
+                <select class="form-select form-select-lg rounded-3"
+                        [(ngModel)]="claimData.policyId" name="policyId" required
+                        (ngModelChange)="onPolicyChange()">
+                  <option value="" disabled>— Select a policy —</option>
+                  <option *ngFor="let p of policies" [value]="p.id">
+                    {{ p.policyNumber || 'POL-' + p.id.slice(0,8) }} - {{ p.subType?.name }}
+                    (IDV: ₹{{ p.insuredDeclaredValue | number }})
+                  </option>
+                </select>
+              </div>
+
+              <!-- IDV Info -->
+              <div *ngIf="selectedPolicy" class="col-md-12">
+                <div class="alert alert-info py-2 small mb-0 d-flex align-items-center gap-2">
+                  <i class="bi bi-info-circle-fill"></i>
+                  <span>
+                    Policy active from <strong>{{ selectedPolicy.startDate | date:'MMM d, y' }}</strong>
+                    to <strong>{{ selectedPolicy.endDate | date:'MMM d, y' }}</strong>.
+                    Max claimable IDV: <strong>₹{{ selectedPolicy.insuredDeclaredValue | number }}</strong>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Incident Date -->
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Incident Date</label>
+                <input type="date" class="form-control form-control-lg rounded-3"
+                       [(ngModel)]="claimData.incidentDate" name="incidentDate" required
+                       [min]="minIncidentDate"
+                       [max]="today"
+                       #incidentDateField="ngModel">
+                <div *ngIf="incidentDateField.invalid && incidentDateField.touched" class="text-danger small mt-1">
+                  <span *ngIf="incidentDateField.errors?.['required']">Incident date is required.</span>
+                  <span *ngIf="incidentDateField.errors?.['min']">Incident date cannot be before the policy start date.</span>
+                  <span *ngIf="incidentDateField.errors?.['max']">Incident date cannot be in the future.</span>
+                </div>
+                <div *ngIf="incidentDateField.valid && claimData.incidentDate && isDateAfterToday(claimData.incidentDate)"
+                     class="text-danger small mt-1">
+                  Incident date cannot be in the future.
+                </div>
+              </div>
+
+              <!-- Claim Amount -->
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Estimated Claim Amount (₹)</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light rounded-start-3">₹</span>
+                  <input type="number" class="form-control rounded-end-3"
+                         [(ngModel)]="claimData.claimAmount" name="claimAmount"
+                         placeholder="0.00" required min="1"
+                         [max]="selectedPolicy?.insuredDeclaredValue || 999999999"
+                         #amountField="ngModel">
+                </div>
+                <div *ngIf="amountField.invalid && amountField.touched" class="text-danger small mt-1">
+                  <span *ngIf="amountField.errors?.['required']">Claim amount is required.</span>
+                  <span *ngIf="amountField.errors?.['min']">Claim amount must be greater than 0.</span>
+                  <span *ngIf="amountField.errors?.['max']">
+                    Claim amount cannot exceed IDV of ₹{{ selectedPolicy?.insuredDeclaredValue | number }}.
+                  </span>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="col-md-12">
+                <label class="form-label fw-semibold">Description of Incident</label>
+                <textarea class="form-control rounded-3" rows="4"
+                          [(ngModel)]="claimData.description" name="description"
+                          placeholder="Please describe what happened in detail..." required></textarea>
+              </div>
+
+              <!-- File Upload -->
+              <div class="col-md-12">
+                <label class="form-label fw-semibold">Support Document (PDF, Images)</label>
+                <div class="file-upload-wrapper border rounded-3 p-4 text-center bg-light"
+                     [class.border-primary]="selectedFile"
+                     (click)="fileInput.click()" style="cursor: pointer;">
+                  <input type="file" #fileInput (change)="onFileSelected($event)" hidden accept=".pdf,image/*">
+                  <div *ngIf="!selectedFile">
+                    <i class="bi bi-cloud-arrow-up display-6 text-primary mb-2 d-inline-block"></i>
+                    <p class="mb-0 fw-medium">Click to upload or drag & drop</p>
+                    <p class="small text-muted mb-0">PDF, JPG, PNG (Max 5MB)</p>
+                  </div>
+                  <div *ngIf="selectedFile" class="d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-file-earmark-check-fill text-success fs-3"></i>
+                    <div class="text-start">
+                      <div class="fw-bold">{{ selectedFile.name }}</div>
+                      <div class="small text-muted">{{ (selectedFile.size / 1024 / 1024) | number:'1.1-2' }} MB</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 mt-5">
+              <button type="button" routerLink="/dashboard" class="btn btn-light btn-lg rounded-pill px-5">Cancel</button>
+              <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 flex-grow-1"
+                      [disabled]="submitting || !claimForm.form.valid || isDateAfterToday(claimData.incidentDate)">
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+                {{ submitting ? 'Initiating Claim...' : 'Submit Claim' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

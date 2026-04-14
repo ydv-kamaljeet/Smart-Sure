@@ -1,0 +1,95 @@
+.step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin-bottom: 8px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.step-item.active .step-circle {
+  background: #fff;
+  color: #1a56db;
+  border-color: #1a56db;
+  box-shadow: 0 0 0 4px rgba(26, 86, 219, 0.1);
+}
+
+.step-circle.done {
+  background: #1a56db;
+  color: #fff;
+  border-color: #1a56db;
+}
+
+.step-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: #e2e8f0;
+  margin: 0 10px;
+  position: relative;
+  top: -20px;
+}
+
+.step-connector.done {
+  background: #1a56db;
+}
+
+.plan-icon {
+  width: 64px;
+  height: 64px;
+  background: #eff6ff;
+  color: #1a56db;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto;
+}
+
+.plan-card {
+  padding: 2rem;
+  text-align: center;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+  border-color: #1a56db;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.premium-plan {
+  border-top: 4px solid #1a56db;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+.card {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}

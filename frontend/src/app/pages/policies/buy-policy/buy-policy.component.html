@@ -1,0 +1,298 @@
+<div class="container py-5">
+
+  <!-- Step Progress -->
+  <div class="row mb-5 justify-content-center">
+    <div class="col-lg-8">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="step-item" [class.active]="step >= 1">
+          <div class="step-circle" [class.done]="step > 1">1</div>
+          <span class="step-label">Category</span>
+        </div>
+        <div class="step-connector" [class.done]="step > 1"></div>
+        <div class="step-item" [class.active]="step >= 2">
+          <div class="step-circle" [class.done]="step > 2">2</div>
+          <span class="step-label">Plan</span>
+        </div>
+        <div class="step-connector" [class.done]="step > 2"></div>
+        <div class="step-item" [class.active]="step >= 3">
+          <div class="step-circle" [class.done]="step > 3">3</div>
+          <span class="step-label">Details</span>
+        </div>
+        <div class="step-connector" [class.done]="step > 3"></div>
+        <div class="step-item" [class.active]="step >= 4">
+          <div class="step-circle">4</div>
+          <span class="step-label">Payment</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div *ngIf="error" class="alert alert-danger rounded-4 mb-4">{{ error }}</div>
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-primary"></div>
+      </div>
+
+      <!-- STEP 1: Select Category -->
+      <div *ngIf="step === 1 && !loading">
+        <h2 class="text-center fw-bold mb-4">Select Insurance Category</h2>
+        <div class="row g-4 justify-content-center">
+          <div *ngFor="let type of insuranceTypes" class="col-md-5">
+            <div class="plan-card h-100 text-center" (click)="selectType(type)" style="cursor:pointer">
+              <div class="plan-icon mb-3">
+                <i [class]="'bi fs-1 ' + (type.name.toLowerCase().includes('vehicle') ? 'bi-car-front' : 'bi-house-heart')" style="color:#1a56db"></i>
+              </div>
+              <h4 class="fw-bold">{{ type.name }}</h4>
+              <p class="text-muted small">{{ type.description }}</p>
+              <button class="btn btn-outline-primary rounded-pill w-100 mt-2">Select</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Select Plan -->
+      <div *ngIf="step === 2 && !loading">
+        <div class="d-flex align-items-center mb-4">
+          <button class="btn btn-link text-decoration-none p-0" (click)="goBack()">
+            <i class="bi bi-arrow-left me-1"></i> Back
+          </button>
+          <h2 class="fw-bold mb-0 mx-auto">Choose Your Plan</h2>
+        </div>
+        <div class="row g-4 justify-content-center">
+          <div *ngFor="let sub of subTypes" class="col-md-5">
+            <div class="plan-card h-100 text-center" (click)="selectSubType(sub)" style="cursor:pointer">
+              <h4 class="fw-bold">{{ sub.name }}</h4>
+              <p class="text-muted small mb-3">{{ sub.description }}</p>
+              <div class="mb-3">
+                <span class="text-muted small">Base Premium</span><br>
+                <span class="fs-4 fw-bold text-primary">{{ sub.basePremium | convertCurrency }}</span>
+                <span class="text-muted">/yr</span>
+              </div>
+              <button class="btn btn-primary rounded-pill w-100">Select Plan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Enter Details -->
+      <div *ngIf="step === 3">
+        <div class="d-flex align-items-center mb-4 position-relative">
+          <button class="btn btn-link text-decoration-none p-0 position-absolute start-0" (click)="goBack()" style="z-index: 10;">
+            <i class="bi bi-arrow-left me-1"></i> Back
+          </button>
+          <div class="text-center w-100">
+            <h2 class="fw-bold mb-1" style="user-select:none;">
+              {{ isVehicle() ? 'Vehicle Details' : 'Property Details' }}
+            </h2>
+            <div class="text-primary small fw-semibold">
+              {{ selectedType?.name }} <i class="bi bi-chevron-right mx-1" style="font-size: 0.7rem;"></i> {{ selectedSubType?.name }}
+            </div>
+          </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4">
+
+            <!-- VEHICLE FORM -->
+            <form *ngIf="isVehicle()" (ngSubmit)="goToPayment()" #vForm="ngForm">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Make <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" [(ngModel)]="vehicle.make" name="make" required placeholder="e.g. Toyota">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Model <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" [(ngModel)]="vehicle.model" name="model" required placeholder="e.g. Camry">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Manufacturing Year <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" [(ngModel)]="vehicle.year" name="year" required min="1990" max="2026">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Manufacturer's Listed Price ({{ locale.currencyCode }}) <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" [(ngModel)]="vehicle.listedPrice" name="listedPrice" required min="1" placeholder="e.g. 1000000">
+                  <div class="form-text">Used to calculate IDV (Insured Declared Value)</div>                </div>
+                <div class="col-md-6">
+                  <label class="form-label">License Plate <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" [(ngModel)]="vehicle.licensePlate" name="plate" required placeholder="MH-01-AB-1234">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">VIN <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" [(ngModel)]="vehicle.vin" name="vin" required placeholder="17-character VIN">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Annual Mileage (km) <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" [(ngModel)]="vehicle.annualMileage" name="mileage" required min="0" placeholder="e.g. 12000">
+                  <div class="form-text text-warning" *ngIf="vehicle.annualMileage > 15000">
+                    <i class="bi bi-exclamation-triangle me-1"></i>High mileage — 20% surcharge applies
+                  </div>
+                </div>
+              </div>
+
+              <!-- Live IDV Preview -->
+              <div class="mt-4 p-3 rounded-3 bg-light" *ngIf="vehicle.listedPrice > 0 && vehicle.year > 0">
+                <div class="d-flex justify-content-between">
+                  <span class="text-muted">Estimated IDV</span>
+                  <span class="fw-bold text-success">{{ calculateVehicleIDV() | convertCurrency }}</span>
+                </div>
+                <div class="d-flex justify-content-between mt-1">
+                  <span class="text-muted small">Depreciation ({{ vehicle.year }} model)</span>
+                  <span class="small text-muted">Based on vehicle age</span>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mt-4" [disabled]="!vForm.valid || vehicle.listedPrice <= 0">
+                Continue to Payment <i class="bi bi-arrow-right ms-2"></i>
+              </button>
+            </form>
+
+            <!-- HOME FORM -->
+            <form *ngIf="isHome()" (ngSubmit)="goToPayment()" #hForm="ngForm">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">Property Address <span class="text-danger">*</span></label>
+                  <textarea class="form-control" [(ngModel)]="home.propertyAddress" name="addr" required rows="2" placeholder="Full property address"></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Property Value ({{ locale.currencyCode }}) <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" [(ngModel)]="home.propertyValue" name="val" required min="1" placeholder="e.g. 5000000">
+                  <div class="form-text">Market value — Sum Insured = 80% of this minus age depreciation</div>                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Year Built <span class="text-danger">*</span></label>
+                  <input type="number" class="form-control" [(ngModel)]="home.yearBuilt" name="yearBuilt" required min="1800" max="2026" placeholder="e.g. 2005">
+                </div>
+
+                <!-- Live IDV Preview for Home -->
+                <div class="col-12" *ngIf="home.propertyValue > 0 && home.yearBuilt > 0">
+                  <div class="p-3 rounded-3 border border-success-subtle bg-success-subtle">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <div class="fw-semibold text-success">Sum Insured</div>
+                        <div class="text-muted small">Reconstruction cost after age-based depreciation</div>
+                      </div>
+                      <div class="fs-4 fw-bold text-success">{{ calculateHomeIDV() | convertCurrency }}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6" *ngIf="!isContentInsurance()">
+                  <label class="form-label">Construction Type <span class="text-danger">*</span></label>
+                  <select class="form-select" [(ngModel)]="home.constructionType" name="constructionType" required>
+                    <option value="Brick">Brick</option>
+                    <option value="Wood">Wood</option>
+                    <option value="Concrete">Concrete</option>
+                    <option value="Steel">Steel</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="col-md-6 d-flex flex-column justify-content-end gap-2 pb-1">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="home.hasSecuritySystem" name="security" id="security">
+                    <label class="form-check-label" for="security">
+                      Has Security System <span class="badge bg-success ms-1">10% discount</span>
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="home.hasFireAlarm" name="fireAlarm" id="fireAlarm">
+                    <label class="form-check-label" for="fireAlarm">Has Fire Alarm</label>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg w-100 rounded-pill mt-4" [disabled]="!hForm.valid || home.propertyValue <= 0">
+                Continue to Payment <i class="bi bi-arrow-right ms-2"></i>
+              </button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Payment Summary -->
+      <div *ngIf="step === 4">
+        <div class="d-flex align-items-center mb-4">
+          <button class="btn btn-link text-decoration-none p-0" (click)="goBack()">
+            <i class="bi bi-arrow-left me-1"></i> Back
+          </button>
+          <h2 class="fw-bold mb-0 mx-auto">Review & Pay</h2>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+          <div class="card-body p-4">
+
+            <h6 class="fw-semibold mb-3 text-muted text-uppercase" style="font-size:0.75rem;letter-spacing:1px">Policy Summary</h6>
+
+            <div class="row g-2 mb-4">
+              <div class="col-6">
+                <div class="p-3 bg-light rounded-3">
+                  <div class="text-muted small">Insurance Type</div>
+                  <div class="fw-semibold">{{ selectedType?.name }}</div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="p-3 bg-light rounded-3">
+                  <div class="text-muted small">Plan</div>
+                  <div class="fw-semibold">{{ selectedSubType?.name }}</div>
+                </div>
+              </div>
+
+              <!-- Vehicle summary -->
+              <ng-container *ngIf="isVehicle()">
+                <div class="col-6">
+                  <div class="p-3 bg-light rounded-3">
+                    <div class="text-muted small">Vehicle</div>
+                    <div class="fw-semibold">{{ vehicle.year }} {{ vehicle.make }} {{ vehicle.model }}</div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="p-3 bg-light rounded-3">
+                    <div class="text-muted small">License Plate</div>
+                    <div class="fw-semibold">{{ vehicle.licensePlate }}</div>
+                  </div>
+                </div>
+              </ng-container>
+
+              <!-- Home summary -->
+              <ng-container *ngIf="isHome()">
+                <div class="col-12">
+                  <div class="p-3 bg-light rounded-3">
+                    <div class="text-muted small">Property Address</div>
+                    <div class="fw-semibold">{{ home.propertyAddress }}</div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+
+            <!-- IDV & Premium breakdown -->
+            <div class="border rounded-3 p-3 mb-4">
+              <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted">{{ isVehicle() ? 'IDV (Insured Declared Value)' : 'Sum Insured' }}</span>
+                <span class="fw-semibold">{{ idv | convertCurrency }}</span>
+              </div>
+              <div class="d-flex justify-content-between py-2 border-bottom" *ngIf="isVehicle() && vehicle.annualMileage > 15000">
+                <span class="text-muted">High Mileage Surcharge</span>
+                <span class="text-warning fw-semibold">+20%</span>
+              </div>
+              <div class="d-flex justify-content-between py-2 border-bottom" *ngIf="isHome() && home.hasSecuritySystem">
+                <span class="text-muted">Security System Discount</span>
+                <span class="text-success fw-semibold">-10%</span>
+              </div>
+              <div class="d-flex justify-content-between py-2">
+                <span class="fw-bold fs-6">Annual Premium</span>
+                <span class="fw-bold text-primary fs-5">{{ finalPremium | convertCurrency }}</span>
+              </div>
+            </div>
+
+            <button class="btn btn-success btn-lg w-100 rounded-pill" (click)="onBuy()" [disabled]="submitting">
+              <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+              <i *ngIf="!submitting" class="bi bi-shield-check me-2"></i>
+              {{ submitting ? 'Processing...' : 'Confirm & Activate Policy' }}
+            </button>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+.truncate-text {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bg-success-lite { background-color: #dcfce7; }
+.bg-warning-lite { background-color: #fef9c3; }
+.bg-danger-lite { background-color: #fee2e2; }
+.bg-info-lite { background-color: #e0f2fe; }
+
+.table thead th {
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-top: none;
+}
+
+.page-link {
+  color: #4b5563;
+  border-color: #e5e7eb;
+}
+
+.page-item.active .page-link {
+  background-color: #1a56db;
+  border-color: #1a56db;
+  color: #fff;
+}
+
+.card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}

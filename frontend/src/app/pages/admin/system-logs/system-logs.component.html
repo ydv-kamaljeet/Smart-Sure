@@ -1,0 +1,162 @@
+<div class="container-fluid py-4">
+
+  <!-- Filters Card -->
+  <div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-terminal me-2"></i>System Logs</h5>
+      <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-primary rounded-pill px-3" (click)="search()">
+          <i class="bi bi-search me-1"></i>Search
+        </button>
+        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" (click)="search()">
+          <i class="bi bi-arrow-clockwise me-1" [class.spin]="loading"></i>Refresh
+        </button>
+        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" (click)="reset()">
+          <i class="bi bi-x-circle me-1"></i>Reset
+        </button>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- Service -->
+        <div class="col-md-2">
+          <label class="form-label small fw-medium text-muted">Service</label>
+          <select class="form-select form-select-sm" [(ngModel)]="params.service" (change)="onFilterChange()">
+            <option value="">All Services</option>
+            <option value="Identity.API">Identity.API</option>
+            <option value="Policy.API">Policy.API</option>
+            <option value="Claims.API">Claims.API</option>
+            <option value="Admin.API">Admin.API</option>
+            <option value="Gateway">Gateway</option>
+          </select>
+        </div>
+
+        <!-- Level -->
+        <div class="col-md-2">
+          <label class="form-label small fw-medium text-muted">Log Level</label>
+          <select class="form-select form-select-sm" [(ngModel)]="params.level" (change)="onFilterChange()">
+            <option value="">All Levels</option>
+            <option value="INF">INF - Information</option>
+            <option value="WRN">WRN - Warning</option>
+            <option value="ERR">ERR - Error</option>
+          </select>
+        </div>
+
+        <!-- Message Search -->
+        <div class="col-md-4">
+          <label class="form-label small fw-medium text-muted">Message Contains</label>
+          <input type="text" class="form-control form-control-sm" placeholder="Search keywords..."
+            [(ngModel)]="params.messageContains" (keyup.enter)="onFilterChange()">
+        </div>
+
+        <!-- Only Exceptions -->
+        <div class="col-md-3 d-flex align-items-end">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="onlyExceptions"
+              [(ngModel)]="params.onlyExceptions" (change)="onFilterChange()">
+            <label class="form-check-label small" for="onlyExceptions">Only Exceptions</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logs Table -->
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light text-secondary small text-uppercase">
+            <tr>
+              <th class="ps-4">Timestamp</th>
+              <th>Level</th>
+              <th>Service</th>
+              <th>Message</th>
+              <th class="text-end pe-4">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="loading">
+              <td colspan="5" class="text-center py-5">
+                <div class="spinner-border spinner-border-sm text-primary"></div>
+              </td>
+            </tr>
+
+            <ng-container *ngFor="let log of logs; let i = index">
+              <!-- Main Row -->
+              <tr (click)="toggleExpand(i)" style="cursor:pointer;">
+                <td class="ps-4">
+                  <div class="small fw-medium">{{ log.timestamp | date:'yyyy-MM-dd' }}</div>
+                  <div class="text-muted" style="font-size:0.75rem;">{{ log.timestamp | date:'HH:mm:ss' }}</div>
+                </td>
+                <td>
+                  <span class="badge rounded-pill" [ngClass]="getLevelBadgeClass(log.level)">
+                    {{ log.level }}
+                  </span>
+                </td>
+                <td class="small text-muted font-monospace">{{ log.service }}</td>
+                <td>
+                  <div class="small text-truncate" style="max-width:400px;">{{ log.message }}</div>
+                  <span *ngIf="log.hasException" class="badge bg-danger-subtle text-danger border border-danger-subtle small mt-1">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Exception
+                  </span>
+                </td>
+                <td class="text-end pe-4">
+                  <i class="bi text-muted" [class.bi-chevron-down]="expandedIndex !== i" [class.bi-chevron-up]="expandedIndex === i"></i>
+                </td>
+              </tr>
+
+              <!-- Expanded Row -->
+              <tr *ngIf="expandedIndex === i" class="table-light">
+                <td colspan="5" class="px-4 py-3">
+                  <div class="row g-3 mb-3">
+                    <div class="col-auto" *ngIf="log.userId">
+                      <small class="text-muted d-block">User ID</small>
+                      <code class="small text-primary">{{ log.userId }}</code>
+                    </div>
+                    <div class="col-auto" *ngIf="log.eventName">
+                      <small class="text-muted d-block">Event</small>
+                      <span class="badge bg-success-subtle text-success border border-success-subtle">{{ log.eventName }}</span>
+                    </div>
+                    <div class="col-auto">
+                      <small class="text-muted d-block">Full Timestamp</small>
+                      <small class="text-dark">{{ log.timestamp }}</small>
+                    </div>
+                  </div>
+                  <div class="bg-dark rounded-3 p-3">
+                    <pre class="text-success mb-0 small" style="white-space:pre-wrap;word-break:break-all;">{{ log.rawEntry }}</pre>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
+
+            <!-- Empty State -->
+            <tr *ngIf="logs.length === 0 && !loading">
+              <td colspan="5" class="text-center py-5 text-muted">
+                <i class="bi bi-search fs-3 d-block mb-2"></i>
+                No logs found matching your criteria.
+                <button class="btn btn-link btn-sm p-0 ms-1" (click)="reset()">Clear filters</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card-footer bg-white border-top py-3 d-flex align-items-center justify-content-between">
+      <small class="text-muted">Showing {{ logs.length }} of {{ totalCount }} entries</small>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="page === 1">
+            <button class="page-link rounded-start-pill" (click)="changePage(page - 1)">Previous</button>
+          </li>
+          <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+          <li class="page-item" [class.disabled]="page >= totalPages">
+            <button class="page-link rounded-end-pill" (click)="changePage(page + 1)">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

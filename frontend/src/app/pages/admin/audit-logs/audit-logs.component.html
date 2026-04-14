@@ -1,0 +1,74 @@
+<div class="container-fluid py-4">
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between">
+      <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-shield-lock me-2"></i>System Audit Logs</h5>
+      <button class="btn btn-sm btn-outline-secondary rounded-pill" (click)="loadLogs()">
+        <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+      </button>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="bg-light text-secondary small text-uppercase fw-bold">
+            <tr>
+              <th class="ps-4">Timestamp</th>
+              <th>Action</th>
+              <th>User</th>
+              <th>Details</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="loading">
+              <td colspan="5" class="text-center py-5">
+                <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                <span class="ms-2">Fetching logs...</span>
+              </td>
+            </tr>
+            <tr *ngIf="!loading && logs.length === 0">
+              <td colspan="5" class="text-center py-5 text-muted">No audit logs found.</td>
+            </tr>
+            <tr *ngFor="let log of logs">
+              <td class="ps-4 text-nowrap small text-muted">
+                {{ log.timestamp | date:'medium':locale.timezone:locale.locale }}
+              </td>
+              <td>
+                <span class="badge rounded-pill" 
+                  [ngClass]="{
+                    'bg-success-lite text-success': log.action.includes('Create') || log.action.includes('Approved'),
+                    'bg-warning-lite text-warning': log.action.includes('Update') || log.action.includes('Modified'),
+                    'bg-danger-lite text-danger': log.action.includes('Delete') || log.action.includes('Rejected'),
+                    'bg-info-lite text-info': !log.action.includes('Create') && !log.action.includes('Update') && !log.action.includes('Delete')
+                  }">
+                  {{ log.action }}
+                </span>
+              </td>
+              <td class="fw-medium text-dark">{{ log.userName }}</td>
+              <td class="text-muted small truncate-text">{{ log.details }}</td>
+              <td class="text-muted small">
+                <span *ngIf="log.ipAddress === '::1' || log.ipAddress === '127.0.0.1' || log.ipAddress === 'Unknown' || !log.ipAddress" class="badge bg-secondary-lite text-secondary">System</span>
+                <span *ngIf="log.ipAddress && log.ipAddress !== '::1' && log.ipAddress !== '127.0.0.1' && log.ipAddress !== 'Unknown'">{{ log.ipAddress }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer bg-white border-top py-3 d-flex align-items-center justify-content-between">
+      <div class="small text-muted">
+        Showing {{ (page - 1) * pageSize + 1 }} to {{ Math.min(page * pageSize, totalCount) }} of {{ totalCount }} logs
+      </div>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="page === 1">
+            <button class="page-link rounded-start-pill" (click)="changePage(page - 1)">Previous</button>
+          </li>
+          <li class="page-item active"><span class="page-link">{{ page }}</span></li>
+          <li class="page-item" [class.disabled]="page >= totalPages">
+            <button class="page-link rounded-end-pill" (click)="changePage(page + 1)">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
