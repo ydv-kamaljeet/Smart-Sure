@@ -16,7 +16,7 @@
       "UpstreamPathTemplate": "/api/auth/{everything}",
       "UpstreamHttpMethod": [ "Post" ],
       "RateLimitOptions": { "ClientWhitelist": [], "EnableRateLimiting": false, "Period": "10s", "PeriodTimespan": 5, "Limit": 50 },
-      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 3, "DurationOfBreak": 10000, "TimeoutValue": 5000 }
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 3, "DurationOfBreak": 10000, "TimeoutValue": 30000 }
     },
     {
       "DownstreamPathTemplate": "/api/auth/{everything}",
@@ -138,7 +138,7 @@
       "UpstreamPathTemplate": "/api/claims/{everything}",
       "UpstreamHttpMethod": [ "Post" ],
       "RateLimitOptions": { "ClientWhitelist": [], "EnableRateLimiting": false, "Period": "10s", "PeriodTimespan": 5, "Limit": 50 },
-      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 3, "DurationOfBreak": 10000, "TimeoutValue": 5000 }
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 3, "DurationOfBreak": 10000, "TimeoutValue": 60000 }
     },
     {
       "DownstreamPathTemplate": "/api/claims/{everything}",
@@ -213,6 +213,34 @@
       "UpstreamHttpMethod": [ "Delete" ],
       "RateLimitOptions": { "ClientWhitelist": [], "EnableRateLimiting": false, "Period": "10s", "PeriodTimespan": 5, "Limit": 50 },
       "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 3, "DurationOfBreak": 10000, "TimeoutValue": 5000 }
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/ai/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5000 } ],
+      "UpstreamPathTemplate": "/api/ai/{everything}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "RateLimitOptions": { "ClientWhitelist": [], "EnableRateLimiting": false, "Period": "10s", "PeriodTimespan": 5, "Limit": 50 },
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 3, "DurationOfBreak": 10000, "TimeoutValue": 120000 }
+    },
+    {
+      "DownstreamPathTemplate": "/api/ai/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5000 } ],
+      "UpstreamPathTemplate": "/api/ai/{everything}",
+      "UpstreamHttpMethod": [ "Post" ],
+      "RateLimitOptions": { "ClientWhitelist": [], "EnableRateLimiting": false, "Period": "10s", "PeriodTimespan": 5, "Limit": 50 },
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 3, "DurationOfBreak": 10000, "TimeoutValue": 120000 }
+    },
+    {
+      "DownstreamPathTemplate": "/api/ai/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [ { "Host": "localhost", "Port": 5000 } ],
+      "UpstreamPathTemplate": "/api/ai/{everything}",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "RateLimitOptions": { "ClientWhitelist": [], "EnableRateLimiting": false, "Period": "10s", "PeriodTimespan": 5, "Limit": 50 },
+      "QoSOptions": { "ExceptionsAllowedBeforeBreaking": 3, "DurationOfBreak": 10000, "TimeoutValue": 120000 }
     }
   ],
   "GlobalConfiguration": {

@@ -42,3 +42,10 @@ public interface IAdminAuditLogService
     Task CreateAuditLogAsync(AuditLogDto auditLog);
     Task LogActionAsync(string action, string entityName, string entityId, string details);
 }
+
+public interface ISystemLogService
+{
+    Task<PagedLogResultDto> SearchLogsAsync(LogSearchParametersDto parameters);
+    Task<LogMetadataDto> GetLogMetadataAsync();
+}
+

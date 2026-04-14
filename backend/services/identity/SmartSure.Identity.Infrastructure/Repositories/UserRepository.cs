@@ -99,7 +99,7 @@ public class UserRepository : IUserRepository
         var query = _context.Users
             .Include(u => u.UserRoles)
             .ThenInclude(ur => ur.Role)
-            .AsQueryable();
+             .AsQueryable();
 
         // Apply optional filters
         if (isActive.HasValue)

@@ -12,6 +12,7 @@ public class ClaimApprovedConsumer : IConsumer<ClaimApprovedEvent>
     private readonly IClaimHistoryRepository _historyRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ClaimApprovedConsumer> _logger;
+    public string userName;
 
     public ClaimApprovedConsumer(
         IClaimRepository claimRepository,
@@ -23,6 +24,8 @@ public class ClaimApprovedConsumer : IConsumer<ClaimApprovedEvent>
         _historyRepository = historyRepository;
         _unitOfWork = unitOfWork;
         _logger = logger;
+
+        
     }
 
     public async Task Consume(ConsumeContext<ClaimApprovedEvent> context)
@@ -46,6 +49,10 @@ public class ClaimApprovedConsumer : IConsumer<ClaimApprovedEvent>
         var oldStatus = claim.Status;
         claim.Status = "Approved";
         claim.UpdatedAt = DateTime.UtcNow;
+        //userName = claim.userName;
+
+
+
 
         await _claimRepository.UpdateClaimAsync(claim);
         await _historyRepository.AddHistoryTokenAsync(new ClaimHistory

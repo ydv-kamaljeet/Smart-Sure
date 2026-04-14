@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,13 +8,20 @@ namespace SmartSure.Shared.Infrastructure.Extensions;
 public static class MassTransitExtensions
 {
     public static IServiceCollection AddMassTransitWithRabbitMq(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         IConfiguration configuration,
-        Action<IBusRegistrationConfigurator>? configure = null)
+        Action<IBusRegistrationConfigurator>? configure = null,
+        string? servicePrefix = null)
     {
         services.AddMassTransit(x =>
         {
-            x.SetKebabCaseEndpointNameFormatter();
+            // Prefix ensures each service gets its own unique queue per consumer
+            // e.g. "claims-policy-created" and "admin-policy-created" instead of sharing "policy-created"
+            // This enables proper fan-out — both services receive every event independently
+            if (!string.IsNullOrEmpty(servicePrefix))
+                x.SetEndpointNameFormatter(new DefaultEndpointNameFormatter(servicePrefix + "-", false));
+            else
+                x.SetKebabCaseEndpointNameFormatter();
 
             configure?.Invoke(x);
 

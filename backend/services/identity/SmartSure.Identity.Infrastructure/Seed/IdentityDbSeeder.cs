@@ -49,6 +49,8 @@ public static class IdentityDbSeeder
                 UserId = Guid.NewGuid(),
                 Email = "admin@smartsure.com",
                 FullName = "System Administrator",
+                Phone = "1234567890",
+                Address = "India",
                 IsEmailVerified = true,  // seeded admin skips email verification
                 IsActive = true
             };

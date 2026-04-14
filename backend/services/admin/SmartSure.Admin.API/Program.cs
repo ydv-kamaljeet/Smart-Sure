@@ -114,6 +114,8 @@ builder.Services.AddScoped<IAdminPolicyService, AdminPolicyService>();
 builder.Services.AddScoped<IAdminDashboardService, AdminDashboardService>();
 builder.Services.AddScoped<IAdminReportsService, AdminReportsService>();
 builder.Services.AddScoped<IAdminAuditLogService, AdminAuditLogService>();
+builder.Services.AddSingleton<ISystemLogService, SystemLogService>();
+
 
 // Email
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));

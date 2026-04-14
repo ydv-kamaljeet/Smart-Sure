@@ -22,7 +22,7 @@ public record LoginDto(
 /// Returned after a successful login or Google OAuth callback.
 /// Contains the RS256-signed JWT access token, a long-lived refresh token, and basic user info.
 /// </summary>
-public record LoginResponseDto(string AccessToken, string RefreshToken, string Email, string FullName, string[] Roles);
+public record LoginResponseDto(string AccessToken, string RefreshToken, string Email, string FullName, string[] Roles, string? Phone, string? Address);
 
 /// <summary>
 /// Payload for refreshing an expired access token using a valid refresh token.

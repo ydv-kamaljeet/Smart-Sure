@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="8.3.6" />
+    <PackageReference Include="Razorpay" Version="2.0.4" />
   </ItemGroup>
 
   <PropertyGroup>

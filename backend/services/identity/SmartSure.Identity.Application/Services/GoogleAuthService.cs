@@ -156,7 +156,7 @@ public class GoogleAuthService : IGoogleAuthService
             var refreshToken = _jwtTokenGenerator.GenerateToken(user.UserId, user.Email, roles, "refresh", 60 * 24 * 7);
 
             return Result<LoginResponseDto>.Success(
-                new LoginResponseDto(jwt, refreshToken, user.Email, user.FullName, roles.ToArray()));
+                new LoginResponseDto(jwt, refreshToken, user.Email, user.FullName, roles.ToArray(), user.Phone, user.Address));
         }
         catch (Exception ex)
         {

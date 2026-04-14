@@ -107,4 +107,22 @@ public class PoliciesController : ControllerBase
         var payments = await _paymentService.GetPaymentsAsync(policyId, GetUserId(), page, pageSize);
         return Ok(payments);
     }
+
+    // Razorpay: Create order before showing checkout
+    [HttpPost("razorpay/create-order")]
+    public async Task<IActionResult> CreateRazorpayOrder([FromBody] CreateRazorpayOrderDto dto)
+    {
+        var result = await _paymentService.CreateRazorpayOrderAsync(dto.Amount);
+        if (!result.IsSuccess) return BadRequest(new { result.ErrorMessage });
+        return Ok(result.Data);
+    }
+
+    // Razorpay: Verify signature, create policy, record payment
+    [HttpPost("razorpay/verify-payment")]
+    public async Task<IActionResult> VerifyRazorpayPayment([FromBody] VerifyRazorpayPaymentDto dto)
+    {
+        var result = await _paymentService.VerifyAndCompletePaymentAsync(GetUserId(), dto);
+        if (!result.IsSuccess) return BadRequest(new { result.ErrorMessage });
+        return Ok(new { PolicyId = result.Data, Message = "Payment verified. Policy activated." });
+    }
 }

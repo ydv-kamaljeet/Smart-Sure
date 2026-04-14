@@ -151,7 +151,7 @@ public class AuthService : IAuthService
             catch { /* swallow — non-critical */ }
         });
 
-        return Result<LoginResponseDto>.Success(new LoginResponseDto(accessToken, refreshToken, user.Email, user.FullName, roles.ToArray()));
+        return Result<LoginResponseDto>.Success(new LoginResponseDto(accessToken, refreshToken, user.Email, user.FullName, roles.ToArray(), user.Phone, user.Address));
     }
 
     // Logout blacklists the current JWT token in memory cache so it cannot be reused

@@ -177,7 +177,10 @@ public class PolicyManagementService : IPolicyManagementService
         var holder = await _policyRepository.GetPolicyHolderAsync(userId);
         var customerName = holder?.FullName ?? "Unknown";
 
-        // Publish PolicyCreatedEvent
+        // Save first — ensure policy is persisted before broadcasting the event
+        await _unitOfWork.SaveChangesAsync();
+
+        // Publish PolicyCreatedEvent after successful save
         await _publishEndpoint.Publish(new PolicyCreatedEvent(
             policy.Id,
             policy.PolicyNumber,
@@ -191,8 +194,6 @@ public class PolicyManagementService : IPolicyManagementService
             policy.StartDate,
             policy.EndDate
         ));
-
-        await _unitOfWork.SaveChangesAsync();
 
         return Result<Guid>.Success(policy.Id);
     }

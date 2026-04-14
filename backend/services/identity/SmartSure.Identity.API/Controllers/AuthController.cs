@@ -192,7 +192,9 @@ public class AuthController : ControllerBase
             accessToken = data.AccessToken,
             email = data.Email,
             fullName = data.FullName,
-            roles = data.Roles
+            roles = data.Roles,
+            phone = data.Phone,
+            address = data.Address
         });
         var encoded = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(payload));
         return Redirect($"http://localhost:4200/auth/google/callback?data={Uri.EscapeDataString(encoded)}");
